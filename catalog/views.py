@@ -25,3 +25,7 @@ def contacts(request):
         context['name'] = name
 
     return render(request, 'catalog/contacts.html', context)
+
+
+def views():
+    return None
