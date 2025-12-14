@@ -5,15 +5,12 @@
 __pycache__/
 db.sqlite3
 media/
+staticfiles/
 
-# Environments
-.env
-.venv
-env/
+# Virtual Environment
 venv/
-ENV/
-env.bak/
-venv.bak/
+.venv/
+env/
 
 # IDE
 .idea/
@@ -25,12 +22,18 @@ venv.bak/
 .DS_Store
 Thumbs.db
 
-# Python
-*.pyc
-*.pyo
-*.pyd
-.Python
-pip-log.txt
+# Environment
+.env
+.env.local
 
-# Virtual Environment
-venv/
+# Database
+*.db
+
+# PostgreSQL
+*.pid
+*.socket
+postgresql/
+
+# Media files
+media/*
+!media/.gitkeep
