@@ -1,37 +1,141 @@
 {% extends 'catalog/base.html' %}
 
-{% block title %}Главная страница{% endblock %}
+{% block title %}Главная страница - Интернет-магазин{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12 text-center mb-4">
-        <h1 class="display-4">Добро пожаловать в наш магазин!</h1>
-        <p class="lead">Лучшие товары по лучшим ценам</p>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <h1 class="display-4">Добро пожаловать в наш магазин!</h1>
+            <p class="lead">Лучшие товары по лучшим ценам</p>
+        </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-md-4 mb-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">Качество</h5>
-                <p class="card-text">Мы гарантируем высокое качество всех товаров.</p>
+    <!-- Баннер или промо-блок -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark text-white">
+                <img src="https://via.placeholder.com/1200x300/007bff/ffffff?text=Распродажа+до+50%25" class="card-img" alt="Распродажа">
+                <div class="card-img-overlay d-flex align-items-center">
+                    <div>
+                        <h2 class="card-title">Мега распродажа!</h2>
+                        <p class="card-text">Скидки до 50% на все товары категории "Электроника"</p>
+                        <a href="#" class="btn btn-light btn-lg">Смотреть акции</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">Доставка</h5>
-                <p class="card-text">Быстрая доставка по всему городу.</p>
+
+    <!-- Список товаров -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h2>Новинки</h2>
+            <p class="text-muted">Последние добавленные товары</p>
+        </div>
+
+        {% if products %}
+            {% for product in products %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card h-100">
+                    <!-- Изображение товара -->
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200?text=Нет+изображения" class="card-img-top" alt="Нет изображения">
+                    {% endif %}
+
+                    <!-- Бейдж цены -->
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-success">{{ product.price }} ₽</span>
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <!-- Категория -->
+                        {% if product.category %}
+                        <div class="mb-2">
+                            <span class="badge bg-secondary">{{ product.category.name }}</span>
+                        </div>
+                        {% endif %}
+
+                        <!-- Название товара -->
+                        <h5 class="card-title">{{ product.name }}</h5>
+
+                        <!-- Описание (обрезанное до 100 символов) -->
+                        <p class="card-text flex-grow-1">
+                            {{ product.description|truncatechars:100 }}
+                            {% if product.description|length > 100 %}
+                            <span class="text-muted">...</span>
+                            {% endif %}
+                        </p>
+
+                        <!-- Кнопки действий -->
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'product_detail' product.pk %}" class="btn btn-primary">
+                                Подробнее
+                            </a>
+                            <button class="btn btn-outline-secondary">
+                                <i class="bi bi-cart"></i> В корзину
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Дата добавления -->
+                    <div class="card-footer text-muted">
+                        <small>Добавлено: {{ product.created_at|date:"d.m.Y" }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-info">
+                    <h4>Товары не найдены</h4>
+                    <p>В нашем магазине пока нет товаров. Загляните позже!</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mt-5">
+        <div class="col-12 text-center mb-4">
+            <h2>Почему выбирают нас?</h2>
+        </div>
+        <div class="col-md-3 col-sm-6 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <i class="bi bi-truck fs-1 text-primary"></i>
+                    <h5>Быстрая доставка</h5>
+                    <p>Доставка по городу за 24 часа</p>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4 mb-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">Поддержка</h5>
-                <p class="card-text">Круглосуточная поддержка клиентов.</p>
+        <div class="col-md-3 col-sm-6 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <i class="bi bi-shield-check fs-1 text-primary"></i>
+                    <h5>Гарантия качества</h5>
+                    <p>Гарантия на все товары 1 год</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <i class="bi bi-currency-exchange fs-1 text-primary"></i>
+                    <h5>Лучшие цены</h5>
+                    <p>Цены ниже чем у конкурентов</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <i class="bi bi-headset fs-1 text-primary"></i>
+                    <h5>Поддержка 24/7</h5>
+                    <p>Круглосуточная поддержка</p>
+                </div>
             </div>
         </div>
     </div>

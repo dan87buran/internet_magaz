@@ -1,12 +1,24 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.db import models
+from django.shortcuts import render, get_object_or_404
+
+
+def product_detail(request, pk):
+    """Контроллер для отображения страницы одного товара"""
+    product = get_object_or_404(models.Product, pk=pk)
+    context = {
+        'product': product,
+    }
+    return render(request, 'catalog/product_detail.html', context)
 
 
 def home(request):
-    """Контроллер главной страницы"""
-    return render(request, 'catalog/home.html')
+    """Главная страница со списком товаров"""
+    products = models.Product.objects.all().order_by('-created_at')
 
+    context = {
+        'products': products,
+    }
+    return render(request, 'catalog/home.html', context)
 
 def contacts(request):
     """Контроллер страницы контактов"""

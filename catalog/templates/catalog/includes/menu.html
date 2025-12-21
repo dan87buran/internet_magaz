@@ -1,0 +1,116 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <div class="container">
+        <!-- Логотип -->
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="bi bi-shop"></i> Магазин
+        </a>
+
+        <!-- Кнопка для мобильных -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Основное меню -->
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                       href="{% url 'home' %}">
+                        <i class="bi bi-house"></i> Главная
+                    </a>
+                </li>
+
+                <!-- Категории (можно динамически подгружать) -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-grid"></i> Категории
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Электроника</a></li>
+                        <li><a class="dropdown-item" href="#">Одежда</a></li>
+                        <li><a class="dropdown-item" href="#">Книги</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Все категории</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'contacts' %}active{% endif %}"
+                       href="{% url 'contacts' %}">
+                        <i class="bi bi-telephone"></i> Контакты
+                    </a>
+                </li>
+
+                <!-- Акции -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-percent"></i> Акции
+                        <span class="badge bg-danger">Новое</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Поиск -->
+            <form class="d-flex me-3" role="search">
+                <div class="input-group">
+                    <input type="search" class="form-control" placeholder="Поиск товаров..." aria-label="Search">
+                    <button class="btn btn-light" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Иконки действий -->
+            <ul class="navbar-nav">
+                <!-- Корзина -->
+                <li class="nav-item">
+                    <a class="nav-link position-relative" href="#" data-bs-toggle="offcanvas"
+                       data-bs-target="#cartOffcanvas">
+                        <i class="bi bi-cart3 fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            3
+                        </span>
+                    </a>
+                </li>
+
+                <!-- Избранное -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-heart fs-5"></i>
+                    </a>
+                </li>
+
+                <!-- Профиль пользователя -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle fs-5"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Профиль</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-bag"></i> Заказы</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Настройки</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Выйти</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Оффканвас для корзины -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Корзина</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <p>Ваша корзина пуста</p>
+        <hr>
+        <div class="d-grid">
+            <a href="#" class="btn btn-primary">Перейти к оформлению</a>
+        </div>
+    </div>
+</div>
