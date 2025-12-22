@@ -1,0 +1,24 @@
+{% extends 'catalog/base.html' %}
+
+{% block extra_css %}
+<style>
+    .blog-post {
+        margin-bottom: 2rem;
+    }
+    .blog-post img {
+        max-height: 300px;
+        object-fit: cover;
+    }
+    .blog-content {
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+    .blog-meta {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    .blog-meta i {
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}

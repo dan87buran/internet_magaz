@@ -100,6 +100,13 @@
     </div>
 </nav>
 
+<li class="nav-item">
+    <a class="nav-link {% if 'blog' in request.path %}active{% endif %}"
+       href="{% url 'blog:blogpost_list' %}">
+        <i class="bi bi-journal-text"></i> Блог
+    </a>
+</li>
+
 <!-- Оффканвас для корзины -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
     <div class="offcanvas-header">
