@@ -23,7 +23,6 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    """Модель продукта"""
     name = models.CharField(
         max_length=100,
         verbose_name='Наименование'
@@ -60,11 +59,19 @@ class Product(models.Model):
         auto_now=True,
         verbose_name='Дата последнего изменения'
     )
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name='Опубликовано',
+        help_text='Отметьте, чтобы товар был виден покупателям'
+    )
 
     class Meta:
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
         ordering = ['-created_at']
+        permissions = [
+            ('can_publish_product', 'Может публиковать товары'),
+        ]
 
     def __str__(self):
         return f'{self.name} - {self.price} руб.'

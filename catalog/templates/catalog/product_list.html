@@ -1,0 +1,205 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Каталог товаров - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+            <li class="breadcrumb-item active">Каталог товаров</li>
+        </ol>
+    </nav>
+
+    <!-- Заголовок и кнопка добавления -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1>Каталог товаров</h1>
+            <p class="text-muted">Все доступные товары в нашем магазине</p>
+        </div>
+        <div class="col-md-6 text-end">
+            {% if perms.catalog.can_publish_product %}
+            <a href="{% url 'product_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Добавить товар
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Фильтры и поиск -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Категория</label>
+                            <select name="category" id="category" class="form-select">
+                                <option value="">Все категории</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}"
+                                        {% if category.id|stringformat:"i" == current_category %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="search" class="form-label">Поиск</label>
+                            <div class="input-group">
+                                <input type="text" name="search" id="search"
+                                       class="form-control" placeholder="Название товара..."
+                                       value="{{ search_query|default:'' }}">
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    {% if current_category or search_query %}
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-secondary mt-4">
+                        <i class="bi bi-x-circle"></i> Сбросить фильтры
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Список товаров -->
+    <div class="row">
+        {% if products %}
+            {% for product in products %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 product-card">
+                    <!-- Бейдж статуса -->
+                    <div class="position-absolute top-0 start-0 m-2">
+                        {% if not product.is_published %}
+                        <span class="badge bg-warning">Черновик</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Изображение товара -->
+                    <div class="card-img-top position-relative" style="height: 200px; overflow: hidden;">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                             class="w-100 h-100" style="object-fit: cover;">
+                        {% else %}
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                            <i class="bi bi-image text-muted fs-1"></i>
+                        </div>
+                        {% endif %}
+
+                        <!-- Бейдж цены -->
+                        <div class="position-absolute bottom-0 end-0 m-2">
+                            <span class="badge bg-success fs-6">{{ product.price }} ₽</span>
+                        </div>
+                    </div>
+
+                    <!-- Информация о товаре -->
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+
+                        <!-- Категория -->
+                        {% if product.category %}
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="bi bi-tag"></i> {{ product.category.name }}
+                            </small>
+                        </p>
+                        {% endif %}
+
+                        <!-- Описание -->
+                        <p class="card-text">
+                            {{ product.description|truncatechars:100|default:"Нет описания" }}
+                        </p>
+
+                        <!-- Дата -->
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Добавлено: {{ product.created_at|date:"d.m.Y" }}
+                            </small>
+                        </p>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'product_detail' product.pk %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye"></i> Просмотр
+                            </a>
+
+                            {% if perms.catalog.can_publish_product %}
+                            <div class="btn-group">
+                                <a href="{% url 'product_update' product.pk %}"
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-pencil"></i> Изменить
+                                </a>
+                                <a href="{% url 'product_delete' product.pk %}"
+                                   class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h4><i class="bi bi-info-circle"></i> Товары не найдены</h4>
+                    <p>По вашему запросу ничего не найдено. Попробуйте изменить параметры поиска.</p>
+                    {% if perms.catalog.can_publish_product %}
+                    <a href="{% url 'product_create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Добавить первый товар
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">{{ products.count }}</h5>
+                    <p class="card-text">Товаров всего</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">{{ products|length }}</h5>
+                    <p class="card-text">Товаров на странице</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">{{ categories.count }}</h5>
+                    <p class="card-text">Категорий</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    {% with published=products|length %}
+                    <h5 class="card-title">{{ published }}</h5>
+                    {% endwith %}
+                    <p class="card-text">Опубликовано</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
