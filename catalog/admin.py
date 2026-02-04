@@ -25,6 +25,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('category', 'created_at')
     search_fields = ('name', 'description', 'category__name')
     readonly_fields = ('created_at', 'updated_at')
+    list_editable = ('is_published',)
 
     fieldsets = (
         ('Основная информация', {
