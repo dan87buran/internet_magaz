@@ -99,3 +99,40 @@ EMAIL_PORT = 25
 DEFAULT_FROM_EMAIL = 'noreply@myshop.com'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+    }
+}
+
+CACHE_ENABLED = os.getenv('CACHE_ENABLED', 'False') == 'True'
+
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.getenv('REDIS_LOCATION', 'redis://127.0.0.1:6379/1'),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "SOCKET_CONNECT_TIMEOUT": 5,
+                "SOCKET_TIMEOUT": 5,
+                "RETRY_ON_TIMEOUT": True,
+                "MAX_CONNECTIONS": 1000,
+                "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+            }
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+CACHE_TTL = 60 * 15
