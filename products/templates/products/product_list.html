@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if cache_enabled %}
+<div class="alert alert-info mb-3">
+    <i class="fas fa-bolt"></i> Кеширование включено (TTL: {{ cache_ttl }} мин.)
+</div>
+{% endif %}
+
+<h1 class="mb-4">Каталог товаров</h1>
+
+<div class="mb-4">
+    <div class="btn-group" role="group">
+        <a href="{% url 'product_list' %}" class="btn btn-outline-primary">
+            Все товары
+        </a>
+        {% for cat in categories %}
+        <a href="{% url 'category_products' cat.id %}" class="btn btn-outline-primary">
+            {{ cat.name }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <!-- ... существующий код ... -->
+
+
+                <div class="mb-2">
+                    {% if product.is_published %}
+                    <span class="badge bg-success">Опубликован</span>
+                    {% else %}
+                    <span class="badge bg-warning">На модерации</span>
+                    {% endif %}
+                </div>
+
+
+                <p class="text-muted small">
+                    Владелец: {{ product.owner.email|default:"Не указан" }}
+                </p>
+            </div>
+            <div class="card-footer">
+                <!-- ... существующие кнопки ... -->
+
+
+                {% if user.is_authenticated %}
+                    <!-- Кнопка редактирования - ТОЛЬКО для владельца -->
+                    {% if product.owner == user %}
+                    <a href="{% url 'product_update' product.pk %}" class="btn btn-warning btn-sm">
+                        Редактировать
+                    </a>
+                    {% endif %}
+
+                    <!-- Кнопка удаления - для владельца ИЛИ модератора -->
+                    {% if product.owner == user or perms.products.delete_product %}
+                    <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger btn-sm">
+                        Удалить
+                    </a>
+                    {% endif %}
+
+                    <!-- Кнопка модерации - ТОЛЬКО для модераторов -->
+                    {% if perms.products.can_unpublish_product %}
+                    <a href="{% url 'product_moderation' product.pk %}" class="btn btn-info btn-sm">
+                        Модерировать
+                    </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
